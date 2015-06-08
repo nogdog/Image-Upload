@@ -89,7 +89,7 @@ class ImageFile
      * @param array $file
      * @return bool
      */
-    public function validFile(array $file)
+    private function validFile(array $file)
     {
         if(!empty($file['error']))
         {
@@ -111,6 +111,29 @@ class ImageFile
             return false;
         }
         $this->imageType = $info[2];
+        return true;
+    }
+
+    /**
+     * Create the image file DB table if not exists
+     *
+     * @return bool
+     */
+    public function createTable()
+    {
+        $sql = file_get_contents(dirname(__FILE__).'/create_table.sql');
+        $sql = str_replace('`images`', "`{$this->tableName}`", $sql);
+        $stmt = $this->db->prepare($sql);
+        if($stmt == false) {
+            error_log($this->db->errorInfo());
+            $this->lastError = "Unable to prepare create table, see ".ini_get('error_log');
+            return false;
+        }
+        if($stmt->execute() == false) {
+            error_log($stmt->errorInfo());
+            $this->lastError = "Unable to execute create table, see ".ini_get('error_log');
+            return false;
+        }
         return true;
     }
 }
