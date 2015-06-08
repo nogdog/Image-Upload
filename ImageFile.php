@@ -10,7 +10,7 @@
 class ImageFile
 {
     private $imageDir;
-    private $tableName;
+    private $tableName = 'images';
     private $db;
     private $imageType;
     private $data = array();
@@ -125,12 +125,12 @@ class ImageFile
         $sql = str_replace('`images`', "`{$this->tableName}`", $sql);
         $stmt = $this->db->prepare($sql);
         if($stmt == false) {
-            error_log($this->db->errorInfo());
+            error_log(print_r($this->db->errorInfo(),1));
             $this->lastError = "Unable to prepare create table, see ".ini_get('error_log');
             return false;
         }
         if($stmt->execute() == false) {
-            error_log($stmt->errorInfo());
+            error_log(print_r($stmt->errorInfo(),1));
             $this->lastError = "Unable to execute create table, see ".ini_get('error_log');
             return false;
         }
